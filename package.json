@@ -6,7 +6,9 @@
   "scripts": {
     "build": "babel src --out-dir . --ignore __tests__",
     "watch": "babel -w src --out-dir . --ignore __tests__",
-    "prepublish": "cross-env NODE_ENV=production npm run build"
+    "prepublish": "cross-env NODE_ENV=production npm run build",
+    "lint": "eslint src",
+    "format": "prettier --write 'src/**/*.js'"
   },
   "keywords": [
     "gatsby",
@@ -28,6 +30,15 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "cross-env": "^5.0.5"
+    "cross-env": "^5.0.5",
+    "eslint": "^4.19.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "prettier": "^1.13.4"
   }
 }
