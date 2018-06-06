@@ -1,6 +1,6 @@
 {
   "name": "gatsby-plugin-netlify-cache",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Cache your build files on Netlify",
   "main": "index.js",
   "scripts": {
