@@ -22,6 +22,16 @@ npm install gatsby-plugin-netlify-cache
 
 Add `'gatsby-plugin-netlify-cache'` to the plugins in your `gatsby-config.js` file.
 
+## ✋ Usage
+
+### Locally
+
+Currently it does cache your files locally, too. I wonder if it should do that and will remove that functionality probably soon.
+
+### Netlify
+
+It automatically restores your cache and caches new files within the Netlify cache folder. This folder is [undocumented but works fine](https://www.contentful.com/blog/2018/05/17/faster-static-site-builds-part-one-process-only-what-you-need/#caching-for-the-win). To reset the cache, hit the `Clear build cache` checkbox in the Netlify app.
+
 ## ⚙️ Configuration
 
 There is no configuration yet.
