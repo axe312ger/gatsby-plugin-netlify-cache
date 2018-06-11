@@ -26,11 +26,16 @@ Add `'gatsby-plugin-netlify-cache'` to the plugins in your `gatsby-config.js` fi
 
 ### Locally
 
-Currently it does cache your files locally, too. I wonder if it should do that and will remove that functionality probably soon.
+In your local environment nothing happens to avoid conflicts with your development process. It actually checks if `process.env.NETLIFY_BUILD_BASE` exists to detect a Netlify environment.
 
 ### Netlify
 
 It automatically restores your cache and caches new files within the Netlify cache folder. This folder is [undocumented but works fine](https://www.contentful.com/blog/2018/05/17/faster-static-site-builds-part-one-process-only-what-you-need/#caching-for-the-win). To reset the cache, hit the `Clear build cache` checkbox in the Netlify app.
+
+These folders are cached:
+
+* `.cache` directory
+* `public` directory
 
 ## ⚙️ Configuration
 

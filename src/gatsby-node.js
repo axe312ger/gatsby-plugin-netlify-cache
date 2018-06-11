@@ -1,51 +1,83 @@
-const { resolve } = require(`path`)
+const { resolve, basename } = require(`path`)
 
 const { ensureDir, readdir, copy } = require(`fs-extra`)
 
-function calculateDirs(store) {
+async function calculateDirs(store) {
   const program = store.getState().program
 
-  const staticDir = resolve(program.directory, `public`, `static`)
-  const cacheDir = process.env.NETLIFY_BUILD_BASE
-    ? resolve(process.env.NETLIFY_BUILD_BASE, `cache`, `.gatsby-static-files`)
-    : resolve(program.directory, `.gatsby-static-files`)
+  const dirsToCache = [
+    resolve(program.directory, `public`),
+    resolve(program.directory, `.cache`)
+  ]
+
+  for (const dir of dirsToCache) {
+    await ensureDir(dir)
+  }
+
+  const netlifyCacheDir = resolve(
+    process.env.NETLIFY_BUILD_BASE,
+    `cache`,
+    `gatsby`
+  )
+
+  await ensureDir(netlifyCacheDir)
 
   return {
-    staticDir,
-    cacheDir
+    dirsToCache,
+    netlifyCacheDir
   }
 }
 
 exports.onPreBootstrap = async function({ store }) {
-  const { staticDir, cacheDir } = calculateDirs(store)
+  if (!process.env.NETLIFY_BUILD_BASE) {
+    return
+  }
 
-  console.log(`Ensuring existance of cache and gatsby public/static directory`)
-  await ensureDir(cacheDir)
-  await ensureDir(staticDir)
+  const { dirsToCache, netlifyCacheDir } = await calculateDirs(store)
 
-  const cacheFiles = await readdir(cacheDir)
-  console.log(`Found ${cacheFiles.length} files in cache directory`)
+  for (const dirPath of dirsToCache) {
+    const dirName = basename(dirPath)
+    const cachePath = resolve(netlifyCacheDir, dirName)
 
-  const staticFiles = await readdir(staticDir)
-  console.log(`Found ${staticFiles.length} files in public/static directory`)
+    await ensureDir(cachePath)
 
-  await copy(cacheDir, staticDir, {
-    overwrite: false
-  })
-  console.log(`Refilled gatsby cache if neccessary`)
+    const dirFiles = await readdir(dirPath)
+    const cacheFiles = await readdir(cachePath)
+
+    console.log(
+      `Found ${cacheFiles.length} cached files for ${dirName} directory with ${
+        dirFiles.length
+      } files.`
+    )
+
+    await copy(cachePath, dirPath)
+  }
+
+  console.log(`Netlify cache restored`)
 }
 
 exports.onPostBuild = async function({ store }) {
-  const { staticDir, cacheDir } = calculateDirs(store)
+  if (!process.env.NETLIFY_BUILD_BASE) {
+    return
+  }
 
-  const cacheFiles = await readdir(cacheDir)
-  console.log(`Found ${cacheFiles.length} files in cache directory`)
+  const { dirsToCache, netlifyCacheDir } = await calculateDirs(store)
 
-  const staticFiles = await readdir(staticDir)
-  console.log(`Found ${staticFiles.length} files in public/static directory`)
+  for (const dirPath of dirsToCache) {
+    const dirName = basename(dirPath)
+    const cachePath = resolve(netlifyCacheDir, dirName)
 
-  await copy(staticDir, cacheDir, {
-    overwrite: false
-  })
-  console.log(`Restored gatsby cache`)
+    const dirFiles = await readdir(dirPath)
+    const cacheFiles = await readdir(cachePath)
+
+    console.log(
+      `Found ${dirFiles.length} files in ${dirName} directory with ${
+        cacheFiles.length
+      } already cached files.`
+    )
+
+    await copy(dirPath, cachePath)
+  }
+
+  console.log(`Netlify cache refilled`)
 }
