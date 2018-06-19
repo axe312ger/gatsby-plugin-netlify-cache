@@ -6,7 +6,7 @@ async function calculateDirs(store) {
   const program = store.getState().program
 
   const dirsToCache = [
-    resolve(program.directory, `public`),
+    resolve(program.directory, `public`, `static`),
     resolve(program.directory, `.cache`)
   ]
 
