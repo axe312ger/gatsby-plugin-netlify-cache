@@ -28,7 +28,7 @@ async function calculateDirs(store) {
   }
 }
 
-exports.onPreBootstrap = async function({ store }) {
+exports.onPreInit = async function({ store }) {
   if (!process.env.NETLIFY_BUILD_BASE) {
     return
   }
