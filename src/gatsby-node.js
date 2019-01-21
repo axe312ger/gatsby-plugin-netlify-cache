@@ -53,7 +53,7 @@ exports.onPreInit = async function({ store }) {
     await copy(cachePath, dirPath)
   }
 
-  console.log(`Netlify cache restored`)
+  console.log(`plugin-netlify-cache: Netlify cache restored`)
 }
 
 exports.onPostBuild = async function({ store }) {
@@ -79,5 +79,5 @@ exports.onPostBuild = async function({ store }) {
     await copy(dirPath, cachePath)
   }
 
-  console.log(`Netlify cache refilled`)
+  console.log(`plugin-netlify-cache: Netlify cache refilled`)
 }
