@@ -2,12 +2,15 @@ const { resolve, basename } = require(`path`)
 
 const { ensureDir, readdir, copy } = require(`fs-extra`)
 
-async function calculateDirs(store) {
+async function calculateDirs(store, extraDirsToCache = []) {
   const program = store.getState().program
 
   const dirsToCache = [
     resolve(program.directory, `public`),
     resolve(program.directory, `.cache`)
+    ...extraDirsToCache.map(dirToCache =>
+      resolve(program.directory, dirToCache)
+    ),
   ]
 
   for (const dir of dirsToCache) {
@@ -28,12 +31,12 @@ async function calculateDirs(store) {
   }
 }
 
-exports.onPreInit = async function({ store }) {
+exports.onPreInit = async function({ store }, { extraDirsToCache }) {
   if (!process.env.NETLIFY_BUILD_BASE) {
     return
   }
 
-  const { dirsToCache, netlifyCacheDir } = await calculateDirs(store)
+  const { dirsToCache, netlifyCacheDir } = await calculateDirs(store, extraDirsToCache)
 
   for (const dirPath of dirsToCache) {
     const dirName = basename(dirPath)
@@ -56,12 +59,12 @@ exports.onPreInit = async function({ store }) {
   console.log(`plugin-netlify-cache: Netlify cache restored`)
 }
 
-exports.onPostBuild = async function({ store }) {
+exports.onPostBuild = async function({ store }, { extraDirsToCache }) {
   if (!process.env.NETLIFY_BUILD_BASE) {
     return
   }
 
-  const { dirsToCache, netlifyCacheDir } = await calculateDirs(store)
+  const { dirsToCache, netlifyCacheDir } = await calculateDirs(store, extraDirsToCache)
 
   for (const dirPath of dirsToCache) {
     const dirName = basename(dirPath)
