@@ -32,11 +32,23 @@ In your local environment nothing happens to avoid conflicts with your developme
 
 It automatically restores your cache and caches new files within the Netlify cache folder. This folder is [undocumented but works fine](https://www.contentful.com/blog/2018/05/17/faster-static-site-builds-part-one-process-only-what-you-need/#caching-for-the-win). To reset the cache, hit the `Clear build cache` checkbox in the Netlify app.
 
-These folders are cached:
+These folders are cached by default:
 
 * `.cache` directory
 * `public` directory
 
+
 ## ⚙️ Configuration
 
-There is no configuration yet.
+If you need additionals folders to be cached, you can use the option `extraDirsToCache` to include one or multiple folders to Netlify cache:
+
+```js
+plugins: [
+  {
+    resolve: "gatsby-plugin-netlify-cache",
+    options: {
+      extraDirsToCache: ["extraDir", ".extraDotDir"],
+    },
+  },
+]
+```
