@@ -40,15 +40,17 @@ These folders are cached by default:
 
 ## ⚙️ Configuration
 
-If you need additionals folders to be cached, you can use the option `extraDirsToCache` to include one or multiple folders to Netlify cache:
+If you need additionals directories to be cached, you can use the option `extraDirsToCache` to include one or multiple directories to Netlify cache:
 
 ```js
 plugins: [
   {
     resolve: "gatsby-plugin-netlify-cache",
     options: {
-      extraDirsToCache: ["extraDir", ".extraDotDir"],
+      extraDirsToCache: ["extraDir", ".extraDotDir", "extra/dir"],
     },
   },
 ]
 ```
+
+> Note: the directory path is relative to the project root directory
