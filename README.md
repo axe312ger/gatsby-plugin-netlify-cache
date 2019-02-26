@@ -40,6 +40,23 @@ These folders are cached by default:
 
 ## ⚙️ Configuration
 
+### `cachePublic` - default: `false`
+
+Caching the public directory on long term can result in a huge directory size which can break your netlify build. Enable this with caution.
+
+```js
+plugins: [
+  {
+    resolve: "gatsby-plugin-netlify-cache",
+    options: {
+      cachePublic: true
+    }
+  }
+]
+```
+
+### `extraDirsToCache` - default: `[]`
+
 If you need additionals directories to be cached, you can use the option `extraDirsToCache` to include one or multiple directories to Netlify cache:
 
 ```js
@@ -47,9 +64,13 @@ plugins: [
   {
     resolve: "gatsby-plugin-netlify-cache",
     options: {
-      extraDirsToCache: ["extraDir", ".extraDotDir", "extra/dir"],
-    },
-  },
+      extraDirsToCache: [
+        "extraDir",
+        ".extraDotDir",
+        "extra/dir"
+      ]
+    }
+  }
 ]
 ```
 
