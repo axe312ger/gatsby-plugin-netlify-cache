@@ -1,17 +1,16 @@
-const { resolve, basename } = require(`path`)
+const { resolve, relative } = require(`path`)
 
 const { ensureDir, readdir, copy } = require(`fs-extra`)
 
-async function calculateDirs(store, extraDirsToCache = []) {
+async function calculateDirs(store, { extraDirsToCache = [] }) {
   const program = store.getState().program
+  const rootDirectory = program.directory
 
   const dirsToCache = [
-    resolve(program.directory, `public`),
-    resolve(program.directory, `.cache`),
-    ...extraDirsToCache.map(dirToCache =>
-      resolve(program.directory, dirToCache)
-    )
-  ]
+    resolve(rootDirectory, `public`),
+    resolve(rootDirectory, `.cache`),
+    ...extraDirsToCache.map(dirToCache => resolve(rootDirectory, dirToCache))
+  ].filter(Boolean)
 
   for (const dir of dirsToCache) {
     await ensureDir(dir)
@@ -26,9 +25,18 @@ async function calculateDirs(store, extraDirsToCache = []) {
   await ensureDir(netlifyCacheDir)
 
   return {
+    rootDirectory,
     dirsToCache,
     netlifyCacheDir
   }
+}
+
+function generateCacheDirectoryNames(rootDirectory, netlifyCacheDir, dirPath) {
+  const relativePath = relative(rootDirectory, dirPath)
+  const dirName = relativePath.replace('/', '--')
+  const cachePath = resolve(netlifyCacheDir, dirName)
+  const humanName = relativePath
+  return { cachePath, humanName }
 }
 
 exports.onPreInit = async function({ store }, { extraDirsToCache }) {
@@ -36,14 +44,19 @@ exports.onPreInit = async function({ store }, { extraDirsToCache }) {
     return
   }
 
-  const { dirsToCache, netlifyCacheDir } = await calculateDirs(
+  const { dirsToCache, netlifyCacheDir, rootDirectory } = await calculateDirs(
     store,
-    extraDirsToCache
+    {
+      extraDirsToCache
+    }
   )
 
   for (const dirPath of dirsToCache) {
-    const dirName = basename(dirPath)
-    const cachePath = resolve(netlifyCacheDir, dirName)
+    const { cachePath, humanName } = generateCacheDirectoryNames(
+      rootDirectory,
+      netlifyCacheDir,
+      dirPath
+    )
 
     await ensureDir(cachePath)
 
@@ -51,9 +64,11 @@ exports.onPreInit = async function({ store }, { extraDirsToCache }) {
     const cacheFiles = await readdir(cachePath)
 
     console.log(
-      `Found ${cacheFiles.length} cached files for ${dirName} directory with ${
+      `plugin-netlify-cache: Restoring ${
+        cacheFiles.length
+      } cached files for ${humanName} directory with ${
         dirFiles.length
-      } files.`
+      } already existing files.`
     )
 
     await copy(cachePath, dirPath)
@@ -67,23 +82,21 @@ exports.onPostBuild = async function({ store }, { extraDirsToCache }) {
     return
   }
 
-  const { dirsToCache, netlifyCacheDir } = await calculateDirs(
+  const { dirsToCache, netlifyCacheDir, rootDirectory } = await calculateDirs(
     store,
-    extraDirsToCache
+    {
+      extraDirsToCache
+    }
   )
 
   for (const dirPath of dirsToCache) {
-    const dirName = basename(dirPath)
-    const cachePath = resolve(netlifyCacheDir, dirName)
-
-    const dirFiles = await readdir(dirPath)
-    const cacheFiles = await readdir(cachePath)
-
-    console.log(
-      `Found ${dirFiles.length} files in ${dirName} directory with ${
-        cacheFiles.length
-      } already cached files.`
+    const { cachePath, humanName } = generateCacheDirectoryNames(
+      rootDirectory,
+      netlifyCacheDir,
+      dirPath
     )
+
+    console.log(`plugin-netlify-cache: Caching ${humanName}...`)
 
     await copy(dirPath, cachePath)
   }
