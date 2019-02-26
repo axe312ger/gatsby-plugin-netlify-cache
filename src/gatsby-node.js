@@ -7,10 +7,10 @@ async function calculateDirs(store, extraDirsToCache = []) {
 
   const dirsToCache = [
     resolve(program.directory, `public`),
-    resolve(program.directory, `.cache`)
+    resolve(program.directory, `.cache`),
     ...extraDirsToCache.map(dirToCache =>
       resolve(program.directory, dirToCache)
-    ),
+    )
   ]
 
   for (const dir of dirsToCache) {
@@ -36,7 +36,10 @@ exports.onPreInit = async function({ store }, { extraDirsToCache }) {
     return
   }
 
-  const { dirsToCache, netlifyCacheDir } = await calculateDirs(store, extraDirsToCache)
+  const { dirsToCache, netlifyCacheDir } = await calculateDirs(
+    store,
+    extraDirsToCache
+  )
 
   for (const dirPath of dirsToCache) {
     const dirName = basename(dirPath)
@@ -64,7 +67,10 @@ exports.onPostBuild = async function({ store }, { extraDirsToCache }) {
     return
   }
 
-  const { dirsToCache, netlifyCacheDir } = await calculateDirs(store, extraDirsToCache)
+  const { dirsToCache, netlifyCacheDir } = await calculateDirs(
+    store,
+    extraDirsToCache
+  )
 
   for (const dirPath of dirsToCache) {
     const dirName = basename(dirPath)
