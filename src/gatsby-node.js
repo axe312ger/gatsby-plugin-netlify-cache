@@ -2,6 +2,8 @@ const { resolve, relative } = require(`path`)
 
 const { ensureDir, readdir, copy } = require(`fs-extra`)
 
+const { readFileCount } = require('./utils')
+
 async function calculateDirs(
   store,
   { extraDirsToCache = [], cachePublic = false }
@@ -44,7 +46,7 @@ function generateCacheDirectoryNames(rootDirectory, netlifyCacheDir, dirPath) {
 
 exports.onPreInit = async function(
   { store },
-  { extraDirsToCache, cachePublic }
+  { extraDirsToCache, cachePublic, verbose = false }
 ) {
   if (!process.env.NETLIFY_BUILD_BASE) {
     return
@@ -67,14 +69,23 @@ exports.onPreInit = async function(
 
     await ensureDir(cachePath)
 
-    const dirFiles = await readdir(dirPath)
-    const cacheFiles = await readdir(cachePath)
+    let dirFileCount
+    let cacheFileCount
+    if (verbose) {
+      dirFileCount = await readFileCount(dirPath)
+      cacheFileCount = await readFileCount(cachePath)
+    } else {
+      const dirFiles = await readdir(dirPath)
+      const cacheFiles = await readdir(cachePath)
+      dirFileCount = dirFiles.length
+      cacheFileCount = cacheFiles.length
+    }
 
     console.log(
       `plugin-netlify-cache: Restoring ${
-        cacheFiles.length
+        cacheFileCount
       } cached files for ${humanName} directory with ${
-        dirFiles.length
+        dirFileCount
       } already existing files.`
     )
 
