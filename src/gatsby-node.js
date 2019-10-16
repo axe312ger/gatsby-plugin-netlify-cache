@@ -45,7 +45,7 @@ function generateCacheDirectoryNames(rootDirectory, netlifyCacheDir, dirPath) {
 }
 
 exports.onPreInit = async function (
-  { store },
+  { store, reporter },
   { extraDirsToCache, cachePublic, verbose = false }
 ) {
   if (!process.env.NETLIFY_BUILD_BASE) {
@@ -81,18 +81,18 @@ exports.onPreInit = async function (
       cacheFileCount = cacheFiles.length
     }
 
-    console.log(
+    reporter.info(
       `plugin-netlify-cache: Restoring ${cacheFileCount} cached files for ${humanName} directory with ${dirFileCount} already existing files.`
     )
 
     await copy(cachePath, dirPath)
   }
 
-  console.log(`plugin-netlify-cache: Netlify cache restored`)
+  reporter.success(`plugin-netlify-cache: Netlify cache restored`)
 }
 
 exports.onPostBuild = async function (
-  { store },
+  { store, reporter },
   { extraDirsToCache, cachePublic }
 ) {
   if (!process.env.NETLIFY_BUILD_BASE) {
@@ -114,10 +114,10 @@ exports.onPostBuild = async function (
       dirPath
     )
 
-    console.log(`plugin-netlify-cache: Caching ${humanName}...`)
+    reporter.info(`plugin-netlify-cache: Caching ${humanName}...`)
 
     await copy(dirPath, cachePath)
   }
 
-  console.log(`plugin-netlify-cache: Netlify cache refilled`)
+  reporter.success(`plugin-netlify-cache: Netlify cache refilled`)
 }
