@@ -9,9 +9,11 @@ async function readFileCount(targetPath) {
     if (stats.isDirectory()) {
       const count = await readFileCount(filePath)
       return count
-    } else {
+    } 
+    if (stats.isFile()) {
       return 1
     }
+    return 0
   })
 
   const results = await Promise.all(countP)
