@@ -35,14 +35,16 @@ It automatically restores your cache and caches new files within the Netlify cac
 These folders are cached by default:
 
 * `.cache` directory
-* `public` directory
-
 
 ## ⚙️ Configuration
 
 ### `cachePublic` - default: `false`
 
-Caching the public directory on long term can result in a huge directory size which can break your netlify build. Enable this with caution.
+The Public directory used to be cached by default.
+
+It was disabled by default as over time, caching the Public directory can result in a huge directory size which can break your Netlify build.
+
+Enable this option with caution.
 
 ```js
 plugins: [
@@ -57,7 +59,7 @@ plugins: [
 
 ### `extraDirsToCache` - default: `[]`
 
-If you need additionals directories to be cached, you can use the option `extraDirsToCache` to include one or multiple directories to Netlify cache:
+If you need additional directories to be cached, you can use the option `extraDirsToCache` to include one or multiple directories in the Netlify cache:
 
 ```js
 plugins: [
