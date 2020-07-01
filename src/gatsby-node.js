@@ -12,7 +12,7 @@ async function calculateDirs(
   const dirsToCache = [
     cachePublic && resolve(rootDirectory, `public`),
     resolve(rootDirectory, `.cache`),
-    ...extraDirsToCache.map(dirToCache => resolve(rootDirectory, dirToCache))
+    ...extraDirsToCache.map((dirToCache) => resolve(rootDirectory, dirToCache)),
   ].filter(Boolean)
 
   for (const dir of dirsToCache) {
@@ -30,7 +30,7 @@ async function calculateDirs(
   return {
     rootDirectory,
     dirsToCache,
-    netlifyCacheDir
+    netlifyCacheDir,
   }
 }
 
@@ -42,7 +42,7 @@ function generateCacheDirectoryNames(rootDirectory, netlifyCacheDir, dirPath) {
   return { cachePath, humanName }
 }
 
-exports.onPreInit = async function(
+exports.onPreInit = async function (
   { store },
   { extraDirsToCache, cachePublic }
 ) {
@@ -54,7 +54,7 @@ exports.onPreInit = async function(
     store,
     {
       extraDirsToCache,
-      cachePublic
+      cachePublic,
     }
   )
 
@@ -71,11 +71,7 @@ exports.onPreInit = async function(
     const cacheFiles = await readdir(cachePath)
 
     console.log(
-      `plugin-netlify-cache: Restoring ${
-        cacheFiles.length
-      } cached files for ${humanName} directory with ${
-        dirFiles.length
-      } already existing files.`
+      `plugin-netlify-cache: Restoring ${cacheFiles.length} cached files for ${humanName} directory with ${dirFiles.length} already existing files.`
     )
 
     await copy(cachePath, dirPath)
@@ -84,7 +80,7 @@ exports.onPreInit = async function(
   console.log(`plugin-netlify-cache: Netlify cache restored`)
 }
 
-exports.onPostBuild = async function(
+exports.onPostBuild = async function (
   { store },
   { extraDirsToCache, cachePublic }
 ) {
@@ -96,7 +92,7 @@ exports.onPostBuild = async function(
     store,
     {
       extraDirsToCache,
-      cachePublic
+      cachePublic,
     }
   )
 
