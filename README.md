@@ -22,6 +22,14 @@ npm install gatsby-plugin-netlify-cache
 
 Add `'gatsby-plugin-netlify-cache'` to the plugins in your `gatsby-config.js` file.
 
+```js
+plugins: [
+  {
+    resolve: "gatsby-plugin-netlify-cache",
+  }
+]
+```
+
 ## ✋ Usage
 
 ### Locally
