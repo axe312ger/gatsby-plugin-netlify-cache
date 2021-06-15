@@ -1,4 +1,10 @@
-# gatsby-plugin-netlify-cache
+# THIS PLUGIN IS DEPRECATED
+
+In favor of https://github.com/netlify/netlify-plugin-gatsby, this plugin will get no more new releases.
+
+---
+
+## gatsby-plugin-netlify-cache (DEPRECATED)
 
 <p align="center">
   <a href="https://www.npmjs.com/package/gatsby-plugin-netlify-cache">
